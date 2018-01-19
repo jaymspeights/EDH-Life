@@ -9,6 +9,10 @@ var certificate = fs.readFileSync('/etc/letsencrypt/live/edh.life/fullchain.pem'
 
 var credentials = {key: privateKey, cert: certificate};
 
+http.get('*', function(req, res) {
+    res.redirect('https://' + req.headers.host + req.url);
+});
+
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
