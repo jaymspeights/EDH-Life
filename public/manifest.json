@@ -1,0 +1,8 @@
+{
+    "background_color": "black",
+    "name": "EDH Life Tracker",
+    "short_name": "EDH Life",
+    "display":      "standalone",
+    "orientation":  "landscape",
+    "manifest_version": 2
+}
