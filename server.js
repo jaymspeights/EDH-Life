@@ -19,6 +19,10 @@ app.get('/.well-known/*', (req, res) => {
   res.sendFile(__dirname + req.originalUrl);
 });
 
+app.get('/manifest.json', (req, res) => {
+  res.sendFile(__dirname + '/manifest.json');
+});
+
 var httpServer = http.createServer(app);
 var httpsServer = https.createServer(credentials, app);
 
