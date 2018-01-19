@@ -7,4 +7,8 @@ app.get('/', (req, res) => {
 
 app.use(express.static('public'))
 
-app.listen(8080);
+app.get('/.well-known/*', (req, res) => {
+  res.sendFile(__dirname + req.originalUrl);
+});
+
+app.listen(80);
