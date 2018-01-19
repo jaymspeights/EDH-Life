@@ -4,8 +4,8 @@ var app = express();
 
 var http = require('http');
 var https = require('https');
-var privateKey  = fs.readFileSync('/etc/letsencrypt/live/edh.life/private.key', 'utf8');
-var certificate = fs.readFileSync('/etc/letsencrypt/live/edh.life/cert.crt', 'utf8');
+var privateKey  = fs.readFileSync('/etc/letsencrypt/live/edh.life/privkey.pem', 'utf8');
+var certificate = fs.readFileSync('/etc/letsencrypt/live/edh.life/fullchain.pem', 'utf8');
 
 var credentials = {key: privateKey, cert: certificate};
 
