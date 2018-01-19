@@ -10,6 +10,7 @@ function setup() {
   createCanvas(windowWidth, windowHeight)
   menu = new Menu(width-5, 5, height/10, height/10);
   addPlayer();
+  noLoop();
 }
 
 function draw() {
@@ -26,9 +27,11 @@ function draw() {
 function mouseClicked() {
   if (menu.inBounds(mouseX, mouseY)) {
     menu.click(mouseX-menu.x+menu.width, mouseY - menu.y);
+    redraw();
     return;
   } else if (menu.expanded){
     menu.contract();
+    redraw();
     return;
   }
   for (var i = 0; i < players.length; i++) {
@@ -51,6 +54,7 @@ function mouseDragged() {
       }
   drag.player.x = mouseX - drag.x_offset;
   drag.player.y = mouseY - drag.y_offset;
+  redraw();
 }
 
 function mouseReleased() {
@@ -58,6 +62,7 @@ function mouseReleased() {
     drag.player.x = drag.x;
     drag.player.y = drag.y;
     drag.player = null;
+    redraw();
   }
 }
 
@@ -92,6 +97,7 @@ function addPlayer() {
       index += 1;
     }
   }
+  redraw();
 }
 
 function getDivisors(num) {
