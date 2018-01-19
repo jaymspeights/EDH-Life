@@ -23,9 +23,8 @@ app.get('/manifest.json', (req, res) => {
   res.sendFile(__dirname + '/manifest.json');
 });
 
-var httpServer = http.createServer(app);
-httpServer.get('*', function(req, res) {
-    res.redirect('https://' + req.headers.host + req.url);
+var httpServer = http.createServer(function(req, res) {
+  res.redirect('https://' + req.headers.host + req.url);
 });
 
 var httpsServer = https.createServer(credentials, app);
