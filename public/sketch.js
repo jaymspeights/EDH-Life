@@ -4,11 +4,20 @@ var height;
 var menu;
 var drag = {'player':null, 'x_offset':null, 'y_offset':null, 'x':null, 'y':null}
 var full = null;
+var rot = false;
+var mx = 0;
+var my = 0;
 
 function setup() {
   width = window.innerWidth;
   height = window.innerHeight;
-  createCanvas(windowWidth, windowHeight)
+  createCanvas(width, height)
+  if (height > width) {
+    rot = true;
+    height = window.innerWidth;
+    width = window.innerHeight;
+  }
+
   menu = new Menu(width-5, 5, height/10, height/10);
   addPlayer();
   noLoop();
@@ -16,6 +25,12 @@ function setup() {
 
 function draw() {
   background(0)
+  if (rot) {
+    push();
+    translate(height/2, width/2);
+    rotate(radians(90));
+    translate(-width/2, -height/2);
+  }
   for (var i = 0; i < players.length; i++) {
     players[i].render()
   }
@@ -26,11 +41,40 @@ function draw() {
     full.render();
   }
   menu.render();
+  if (rot) {
+    pop();
+  }
+}
+
+window.addEventListener("orientationchange", function() {
+    setTimeout(rotateCanvas, 100);
+});
+
+function rotateCanvas() {
+  resizeCanvas(window.innerWidth, window.innerHeight)
+  if (window.innerHeight > window.innerWidth) {
+    rot = true;
+    height = window.innerWidth;
+    width = window.innerHeight;
+  } else {
+    rot = false;
+    width = window.innerWidth;
+    height = window.innerHeight;
+  }
+  orientPlayers();
+  redraw();
 }
 
 function mouseClicked() {
-  if (menu.inBounds(mouseX, mouseY)) {
-    menu.click(mouseX-menu.x+menu.width, mouseY - menu.y);
+  if (rot) {
+    mx = mouseY;
+    my = height - mouseX;
+  } else {
+    mx = mouseX;
+    my = mouseY;
+  }
+  if (menu.inBounds(mx, my)) {
+    menu.click(mx-menu.x+menu.width, my - menu.y);
     redraw();
     return;
   } else if (menu.expanded){
@@ -39,42 +83,50 @@ function mouseClicked() {
     return;
   }
   if (full != null) {
-    full.click(mouseX, mouseY)
+    full.click(mx, my)
     return;
   }
   for (var i = 0; i < players.length; i++) {
-    if (players[i].inBounds(mouseX, mouseY)) {
-      players[i].click(mouseX-players[i].x, mouseY-players[i].y);
+    if (players[i].inBounds(mx, my)) {
+      players[i].click(mx-players[i].x, my-players[i].y);
+      redraw();
     }
   }
 }
 
 function mouseDragged() {
+  if (rot) {
+    mx = mouseY;
+    my = height - mouseX;
+  } else {
+    mx = mouseX;
+    my = mouseY;
+  }
   if (drag.player == null) {
     if (full != null) {
       drag.player = full;
-      drag.x_offset = mouseX - full.x;
-      drag.y_offset = mouseY - full.y;
+      drag.x_offset = mx - full.x;
+      drag.y_offset = my - full.y;
       drag.x = full.x;
       drag.y = full.y;
-      drag.player.x = mouseX - drag.x_offset;
-      drag.player.y = mouseY - drag.y_offset;
+      drag.player.x = mx - drag.x_offset;
+      drag.player.y = my - drag.y_offset;
       redraw();
       return;
     }
     for(var i = 0; i < players.length; i++) {
-      if (players[i].inBounds(mouseX, mouseY)) {
+      if (players[i].inBounds(mx, my)) {
         drag.player = players[i];
-        drag.x_offset = mouseX - players[i].x;
-        drag.y_offset = mouseY - players[i].y;
+        drag.x_offset = mx - players[i].x;
+        drag.y_offset = my - players[i].y;
         drag.x = players[i].x;
         drag.y = players[i].y;
         break;
       }
     }
   }
-  drag.player.x = mouseX - drag.x_offset;
-  drag.player.y = mouseY - drag.y_offset;
+  drag.player.x = mx - drag.x_offset;
+  drag.player.y = my - drag.y_offset;
   redraw();
 }
 
@@ -82,7 +134,7 @@ function mouseReleased() {
   if (drag.player != null) {
     var dx = Math.abs(drag.player.x - drag.x);
     var dy = Math.abs(drag.player.y - drag.y);
-    if (dx > width/3 || dy > width/3 || dx+dy > width/3) {
+    if (dx > width/4 || dy > width/4 || dx+dy > width/4) {
       full = drag.player.fullscreen(width, height);
       if (full == null) {
         orientPlayers();
@@ -97,7 +149,11 @@ function mouseReleased() {
 }
 
 function addPlayer() {
-  if (players.length == 9) return;
+  if (players.length == 9) {
+    menu.collapse();
+    return;
+  }
+  full = null;
   var newPlayer = new Player(0, 0, 0, 0, getRandomColor(), 'Player ' + (players.length+1));
   for (let p of players) {
     p.damage.push({'amt':0, 'color':newPlayer.color});

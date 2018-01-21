@@ -58,8 +58,6 @@ class Player {
       this.life++;
     else
       this.life--;
-    this.render();
-    menu.render();
   }
 
   render() {
