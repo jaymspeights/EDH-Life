@@ -31,6 +31,13 @@ class Player {
     this.y = y;
   }
 
+  fullscreen(width, height) {
+    this.fw = width;
+    this.fh = height;
+    this.fullscreen = true;
+    this.center = this.fw/2
+  }
+
   setFontSize(size) {
     this.font_size = size;
     this.top_line = this.top_margin + this.font_size*3;
@@ -47,10 +54,17 @@ class Player {
   }
 
   render() {
-    this.center = this.width/2;
     fill(this.color);
-    rect(this.x + this.margin, this.y + this.margin,
-       this.width - 2*this.margin, this.height - 2*this.margin, this.radius);
+    if (this.fullscreen) {
+      this.center = this.fw/2;
+      rect(this.x + this.margin, this.y + this.margin,
+         this.width - 2*this.margin, this.height - 2*this.margin, this.radius);
+      this.font_size*=2;
+    } else {
+      this.center = this.width/2;
+      rect(this.x + this.margin, this.y + this.margin,
+         this.width - 2*this.margin, this.height - 2*this.margin, this.radius);
+
     textSize(this.font_size*2)
     fill(0)
     textAlign(CENTER, TOP)
