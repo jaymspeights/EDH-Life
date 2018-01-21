@@ -62,16 +62,9 @@ class Player {
 
   render() {
     fill(this.color);
-    if (this.fullscreen) {
-      this.center = this.fw/2;
-      rect(this.x + this.margin, this.y + this.margin,
-         this.width - 2*this.margin, this.height - 2*this.margin, this.radius);
-      this.font_size*=2;
-    } else {
-      this.center = this.width/2;
-      rect(this.x + this.margin, this.y + this.margin,
-         this.width - 2*this.margin, this.height - 2*this.margin, this.radius);
-    }
+    this.center = this.width/2;
+    rect(this.x + this.margin, this.y + this.margin,
+       this.width - 2*this.margin, this.height - 2*this.margin, this.radius);
     textSize(this.font_size*2)
     fill(0)
     textAlign(CENTER, TOP)
