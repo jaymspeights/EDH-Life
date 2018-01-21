@@ -2,7 +2,7 @@ var players = [];
 var width;
 var height;
 var menu;
-var drag = {'i':null, 'x_offset':null, 'y_offset':null, 'x':null, 'y':null}
+var drag = {'player':null, 'x_offset':null, 'y_offset':null, 'x':null, 'y':null}
 var full = null;
 
 function setup() {
@@ -34,7 +34,7 @@ function mouseClicked() {
     redraw();
     return;
   } else if (menu.expanded){
-    menu.contract();
+    menu.collapse();
     redraw();
     return;
   }
@@ -66,8 +66,7 @@ function mouseReleased() {
     var dx = Math.abs(drag.player.x - drag.x);
     var dy = Math.abs(drag.player.y - drag.y);
     if (dx > width/3 || dy > width/3 || dx+dy > width/3) {
-      full = drag.player.fullscreen();
-      console.log('fullsceening')
+      full = drag.player.fullscreen(width, height);
     }
     else {
       drag.player.x = drag.x;
@@ -80,14 +79,30 @@ function mouseReleased() {
 
 function addPlayer() {
   if (players.length == 9) return;
-  var divisor = getDivisors(players.length + 1);
+  var newPlayer = new Player(0, 0, 0, 0, getRandomColor(), 'Player ' + (players.length+1));
+  players.push(newPlayer);
+  orientPlayers();
+  for (let p of players) {
+    if (p !== newPlayer) {
+      p.damage.push({'amt':0, 'color':newPlayer.color});
+    } else {
+      for (var i = 0; i < players.length; i++) {
+        p.damage.push({'amt':0, 'color':players[i].color});
+      }
+    }
+  }
+  redraw();
+}
+
+function orientPlayers() {
+  console.log('orienting players')
+  var divisor = getDivisors(players.length);
   var scale_x = width / divisor.x;
   var scale_y = height / divisor.y;
-  var newPlayer = new Player(0, 0, scale_x, scale_y, getRandomColor(), 'Player ' + (players.length+1));
-  players.push(newPlayer);
   var index = 0;
   for (var y = 0; y < divisor.y; y++) {
     for (var x = 0; x < divisor.x; x++) {
+      if (index > players.length) return;
       if (players.length == index) {
         players[index-1].width += scale_x;
       }
@@ -97,19 +112,10 @@ function addPlayer() {
         players[index].width = scale_x;
         players[index].height = scale_y;
         players[index].setFontSize(scale_y/16);
-        if (players[index]!== newPlayer) {
-          players[index].damage.push({'amt':0, 'color':newPlayer.color});
-        } else {
-          for (var i = 0; i < players.length; i++) {
-            if (i == index) continue;
-            players[index].damage.push({'amt':0, 'color':players[i].color});
-          }
-        }
       }
       index += 1;
     }
   }
-  redraw();
 }
 
 function getDivisors(num) {

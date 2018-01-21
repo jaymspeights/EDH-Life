@@ -14,6 +14,7 @@ class Player {
     this.top_margin = 5;
     this.margin = 2;
     this.radius = 25;
+    this.full = false;
   }
 
   inBounds(xp, yp) {
@@ -32,7 +33,7 @@ class Player {
   }
 
   fullscreen(width, height) {
-    if (this.full) {
+    if (this.full == false) {
       this.width = width;
       this.height = height;
       this.full = true;
@@ -130,7 +131,7 @@ class Menu {
       this.expanded = true;
     }
   }
-  contract() {
+  collapse() {
     if (this.expanded) {
       this.width = this.width/5;
       this.expanded = false;
