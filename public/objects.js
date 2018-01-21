@@ -33,10 +33,11 @@ class Player {
 
   fullscreen(width, height) {
     if (this.full) {
-      this.fw = width;
-      this.fh = height;
+      this.width = width;
+      this.height = height;
       this.full = true;
-      this.center = this.fw/2
+      this.x = 0;
+      this.y = 0;
       return this;
     }
     else {

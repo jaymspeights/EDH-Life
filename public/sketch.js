@@ -69,8 +69,10 @@ function mouseReleased() {
       full = drag.player.fullscreen();
       console.log('fullsceening')
     }
-    drag.player.x = drag.x;
-    drag.player.y = drag.y;
+    else {
+      drag.player.x = drag.x;
+      drag.player.y = drag.y;
+    }
     drag.player = null;
     redraw();
   }
