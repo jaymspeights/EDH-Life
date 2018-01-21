@@ -2,7 +2,8 @@ var players = [];
 var width;
 var height;
 var menu;
-var drag = {'player':null, 'x_offset':null, 'y_offset':null, 'x':null, 'y':null}
+var drag = {'i':null, 'x_offset':null, 'y_offset':null, 'x':null, 'y':null}
+var full = null;
 
 function setup() {
   width = window.innerWidth;
@@ -18,8 +19,11 @@ function draw() {
   for (var i = 0; i < players.length; i++) {
     players[i].render()
   }
-  if (drag.player != null) {
-    drag.player.render();
+  if (drag.i != null) {
+    players[drag.i].render();
+  }
+  if (full != null) {
+    full.render();
   }
   menu.render();
 }
@@ -42,31 +46,32 @@ function mouseClicked() {
 }
 
 function mouseDragged() {
-  if (drag.player == null)
+  if (drag.i == null)
     for(var i = 0; i < players.length; i++)
       if (players[i].inBounds(mouseX, mouseY)) {
-        drag.player = players[i];
+        drag.i = i;
         drag.x_offset = mouseX - players[i].x;
         drag.y_offset = mouseY - players[i].y;
         drag.x = players[i].x;
         drag.y = players[i].y;
         break;
       }
-  drag.player.x = mouseX - drag.x_offset;
-  drag.player.y = mouseY - drag.y_offset;
+  players[drag.i].x = mouseX - drag.x_offset;
+  players[drag.i].y = mouseY - drag.y_offset;
   redraw();
 }
 
 function mouseReleased() {
-  if (drag.player != null) {
-    var dx = Math.abs(drag.player.x - drag.x);
-    var dy = Math.abs(drag.player.y - drag.y);
+  if (drag.i != null) {
+    var dx = Math.abs(players[drag.i].x - drag.x);
+    var dy = Math.abs(players[drag.i].y - drag.y);
     if (dx > width/3 || dy > width/3 || dx+dy > width/3) {
-      drag.player.fullscreen(width, height);
+      players[drag.i].fullscreen(width, height);
+      full = players[drag.i]
     }
-    drag.player.x = drag.x;
-    drag.player.y = drag.y;
-    drag.player = null;
+    players[drag.i].x = drag.x;
+    players[drag.i].y = drag.y;
+    drag.i = null;
     redraw();
   }
 }
