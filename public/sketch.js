@@ -38,6 +38,10 @@ function mouseClicked() {
     redraw();
     return;
   }
+  if (full != null) {
+    full.click(mouseX, mouseY)
+    return;
+  }
   for (var i = 0; i < players.length; i++) {
     if (players[i].inBounds(mouseX, mouseY)) {
       players[i].click(mouseX-players[i].x, mouseY-players[i].y);
@@ -46,8 +50,19 @@ function mouseClicked() {
 }
 
 function mouseDragged() {
-  if (drag.player == null)
-    for(var i = 0; i < players.length; i++)
+  if (drag.player == null) {
+    if (full != null) {
+      drag.player = full;
+      drag.x_offset = mouseX - full.x;
+      drag.y_offset = mouseY - full.y;
+      drag.x = full.x;
+      drag.y = full.y;
+      drag.player.x = mouseX - drag.x_offset;
+      drag.player.y = mouseY - drag.y_offset;
+      redraw();
+      return;
+    }
+    for(var i = 0; i < players.length; i++) {
       if (players[i].inBounds(mouseX, mouseY)) {
         drag.player = players[i];
         drag.x_offset = mouseX - players[i].x;
@@ -56,6 +71,8 @@ function mouseDragged() {
         drag.y = players[i].y;
         break;
       }
+    }
+  }
   drag.player.x = mouseX - drag.x_offset;
   drag.player.y = mouseY - drag.y_offset;
   redraw();
@@ -67,8 +84,10 @@ function mouseReleased() {
     var dy = Math.abs(drag.player.y - drag.y);
     if (dx > width/3 || dy > width/3 || dx+dy > width/3) {
       full = drag.player.fullscreen(width, height);
-    }
-    else {
+      if (full == null) {
+        orientPlayers();
+      }
+    } else {
       drag.player.x = drag.x;
       drag.player.y = drag.y;
     }
@@ -80,22 +99,16 @@ function mouseReleased() {
 function addPlayer() {
   if (players.length == 9) return;
   var newPlayer = new Player(0, 0, 0, 0, getRandomColor(), 'Player ' + (players.length+1));
+  for (let p of players) {
+    p.damage.push({'amt':0, 'color':newPlayer.color});
+    newPlayer.damage.push({'amt':0, 'color':p.color});
+  }
   players.push(newPlayer);
   orientPlayers();
-  for (let p of players) {
-    if (p !== newPlayer) {
-      p.damage.push({'amt':0, 'color':newPlayer.color});
-    } else {
-      for (var i = 0; i < players.length; i++) {
-        p.damage.push({'amt':0, 'color':players[i].color});
-      }
-    }
-  }
   redraw();
 }
 
 function orientPlayers() {
-  console.log('orienting players')
   var divisor = getDivisors(players.length);
   var scale_x = width / divisor.x;
   var scale_y = height / divisor.y;
