@@ -67,6 +67,7 @@ function mouseReleased() {
     var dy = Math.abs(drag.player.y - drag.y);
     if (dx > width/3 || dy > width/3 || dx+dy > width/3) {
       full = drag.player.fullscreen();
+      console.log('fullsceening')
     }
     drag.player.x = drag.x;
     drag.player.y = drag.y;
