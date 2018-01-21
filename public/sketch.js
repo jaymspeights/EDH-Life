@@ -19,8 +19,8 @@ function draw() {
   for (var i = 0; i < players.length; i++) {
     players[i].render()
   }
-  if (drag.i != null) {
-    players[drag.i].render();
+  if (drag.player != null) {
+    drag.player.render();
   }
   if (full != null) {
     full.render();
@@ -46,32 +46,31 @@ function mouseClicked() {
 }
 
 function mouseDragged() {
-  if (drag.i == null)
+  if (drag.player == null)
     for(var i = 0; i < players.length; i++)
       if (players[i].inBounds(mouseX, mouseY)) {
-        drag.i = i;
+        drag.player = players[i];
         drag.x_offset = mouseX - players[i].x;
         drag.y_offset = mouseY - players[i].y;
         drag.x = players[i].x;
         drag.y = players[i].y;
         break;
       }
-  players[drag.i].x = mouseX - drag.x_offset;
-  players[drag.i].y = mouseY - drag.y_offset;
+  drag.player.x = mouseX - drag.x_offset;
+  drag.player.y = mouseY - drag.y_offset;
   redraw();
 }
 
 function mouseReleased() {
-  if (drag.i != null) {
-    var dx = Math.abs(players[drag.i].x - drag.x);
-    var dy = Math.abs(players[drag.i].y - drag.y);
+  if (drag.player != null) {
+    var dx = Math.abs(drag.player.x - drag.x);
+    var dy = Math.abs(drag.player.y - drag.y);
     if (dx > width/3 || dy > width/3 || dx+dy > width/3) {
-      players[drag.i].fullscreen(width, height);
-      full = players[drag.i]
+      full = drag.player.fullscreen();
     }
-    players[drag.i].x = drag.x;
-    players[drag.i].y = drag.y;
-    drag.i = null;
+    drag.player.x = drag.x;
+    drag.player.y = drag.y;
+    drag.player = null;
     redraw();
   }
 }

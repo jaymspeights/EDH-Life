@@ -14,7 +14,6 @@ class Player {
     this.top_margin = 5;
     this.margin = 2;
     this.radius = 25;
-    this.full = false;
   }
 
   inBounds(xp, yp) {
@@ -33,11 +32,17 @@ class Player {
   }
 
   fullscreen(width, height) {
-    this.width = width;
-    this.height = height;
-    this.x = 0;
-    this.y = 0;
-    this.full = true;
+    if (this.full) {
+      this.fw = width;
+      this.fh = height;
+      this.full = true;
+      this.center = this.fw/2
+      return this;
+    }
+    else {
+      this.full = false;
+      return null;
+    }
   }
 
   setFontSize(size) {
@@ -56,14 +61,17 @@ class Player {
   }
 
   render() {
-    if (this.full == true) {
-      this.x = 0;
-      this.y = 0;
-    }
     fill(this.color);
-    this.center = this.width/2;
-    rect(this.x + this.margin, this.y + this.margin,
-       this.width - 2*this.margin, this.height - 2*this.margin, this.radius);
+    if (this.fullscreen) {
+      this.center = this.fw/2;
+      rect(this.x + this.margin, this.y + this.margin,
+         this.width - 2*this.margin, this.height - 2*this.margin, this.radius);
+      this.font_size*=2;
+    } else {
+      this.center = this.width/2;
+      rect(this.x + this.margin, this.y + this.margin,
+         this.width - 2*this.margin, this.height - 2*this.margin, this.radius);
+
     textSize(this.font_size*2)
     fill(0)
     textAlign(CENTER, TOP)
