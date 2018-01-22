@@ -216,11 +216,11 @@ function getDivisors(num) {
   if (num == 9) return {x:3, y:3};
 }
 
-var offset = Math.floor(Math.random()*360);
+var offset = Math.floor(Math.random()*180)-90;
 var color_index = 0;
 function getRandomColor() {
-  let b = color_index < 5? '100%':'50%';
-  let c = `hsb(${Math.floor(offset+color_index*360*0.618033988749895)%360},100%,${b})`
+  let b = color_index < 5? '95%':'55%';
+  let c = `hsb(${Math.floor(offset+color_index*360*0.618033988749895+360)%360},100%,${b})`
   color_index++;
   return c;
 }

@@ -95,10 +95,14 @@ class Player {
       line(this.center + this.x, this.y + this.top_line, this.center+this.x, this.y+this.height);
       textSize(this.font_size*2);
       this.scale = (this.height-this.top_line)/(this.damage.length+1);
+      push();
+      strokeWeight(3);
+      stroke(0)
       for (let i = 0; i < this.damage.length; i++) {
         fill(this.damage[i].color);
         text(this.damage[i].amt, this.x+this.center*1.5, this.y+this.top_line+(i+1)*this.scale);
       }
+      pop();
     } else {
       this.bottom_line = this.top_margin + this.font_size*6;
       text(this.life, this.x + this.center, this.y + this.top_line);
@@ -107,6 +111,9 @@ class Player {
       var scale_y = (this.height - this.bottom_line)/(grid.y+1);
       var index = 0;
       textSize(this.font_size*2)
+      push();
+      strokeWeight(1);
+      stroke(0)
       for (var i = 0; i < grid.x; i++) {
         for (var j = 0; j < grid.y; j++) {
           if (index >= this.damage.length) continue;
@@ -115,6 +122,7 @@ class Player {
           index++;
         }
       }
+      pop();
     }
   }
 }
