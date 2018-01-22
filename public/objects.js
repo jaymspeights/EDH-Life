@@ -99,7 +99,8 @@ function getLayout(num) {
 
 class Menu {
   //(x,y) == top right corner
-  constructor(x, y, width, height) {
+  constructor(x, y, width, height, img) {
+    this.img = img;
     this.x = x;
     this.y = y;
     this.width = width;
@@ -152,9 +153,7 @@ class Menu {
       }
     }
     else {
-      fill(100);
-      rect(width + this.x - this.width, this.y,
-            this.width, this.height);
+      image(this.img, width + this.x - this.width, this.y);
     }
   }
 }

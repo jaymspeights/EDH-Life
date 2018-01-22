@@ -2,11 +2,25 @@ var players = [];
 var width;
 var height;
 var menu;
+
+//player currenty being dragged
 var drag = {'player':null, 'x_offset':null, 'y_offset':null, 'x':null, 'y':null}
+
+//contains current fullscreen player
 var full = null;
+
+//is screen rotated?
 var rot = false;
+
+//used for mouseX/Y transformations when rotated
 var mx = 0;
 var my = 0;
+
+var settings_img;
+
+function preload() {
+  settings_img = loadImage('images/settings.png');
+}
 
 function setup() {
   width = window.innerWidth;
@@ -17,8 +31,8 @@ function setup() {
     height = window.innerWidth;
     width = window.innerHeight;
   }
-
-  menu = new Menu(-5, 5, height/10, height/10);
+  settings_img.resize(height/10, height/10);
+  menu = new Menu(-5, 5, height/10, height/10, settings_img);
   addPlayer();
   noLoop();
 }
