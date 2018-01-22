@@ -197,7 +197,6 @@ function orientPlayers() {
         players[index].y = y*scale_y;
         players[index].width = scale_x;
         players[index].height = scale_y;
-        players[index].setFontSize(scale_y/16);
       }
       index += 1;
     }

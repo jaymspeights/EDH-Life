@@ -61,6 +61,7 @@ class Player {
   }
 
   render() {
+    this.setFontSize(this.height/16);
     fill(this.color);
     this.center = this.width/2;
     rect(this.x + this.margin, this.y + this.margin,
