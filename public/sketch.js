@@ -18,7 +18,7 @@ function setup() {
     width = window.innerHeight;
   }
 
-  menu = new Menu(width-5, 5, height/10, height/10);
+  menu = new Menu(-5, 5, height/10, height/10);
   addPlayer();
   noLoop();
 }
@@ -47,7 +47,7 @@ function draw() {
 }
 
 window.addEventListener("orientationchange", function() {
-    setTimeout(rotateCanvas, 100);
+    setTimeout(rotateCanvas, 200);
 });
 
 function rotateCanvas() {
@@ -74,7 +74,7 @@ function mouseClicked() {
     my = mouseY;
   }
   if (menu.inBounds(mx, my)) {
-    menu.click(mx-menu.x+menu.width, my - menu.y);
+    menu.click(mx+menu.x-menu.width, my - menu.y);
     redraw();
     return;
   } else if (menu.expanded){

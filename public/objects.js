@@ -111,7 +111,7 @@ class Menu {
   }
 
   inBounds(xp, yp) {
-    return xp <= this.x && xp >= this.x-this.width &&
+    return xp <= width+this.x && xp >= width+this.x-this.width &&
             yp >= this.y && yp <= this.y+this.height;
   }
 
@@ -138,22 +138,22 @@ class Menu {
   render() {
     if (this.expanded) {
       fill(100);
-      rect(this.x - this.width, this.y,
+      rect(width + this.x - this.width, this.y,
             this.width, this.height*this.menu_items.length);
       for (var i = 0; i < this.menu_items.length; i++) {
         fill(150)
-        rect(this.x - this.width+5, this.y + i*this.height+5,
+        rect(width + this.x - this.width+5, this.y + i*this.height+5,
             this.width-10, this.height-10, 25);
         fill(0)
         textAlign(CENTER, CENTER);
         textSize(this.height/2)
-        text(this.menu_items[i].name, this.x - this.width, this.y + i*this.height,
+        text(this.menu_items[i].name, width + this.x - this.width, this.y + i*this.height,
             this.width, this.height);
       }
     }
     else {
       fill(100);
-      rect(this.x - this.width, this.y,
+      rect(width + this.x - this.width, this.y,
             this.width, this.height);
     }
   }
