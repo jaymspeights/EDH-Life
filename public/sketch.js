@@ -174,7 +174,7 @@ function addPlayer() {
     return;
   }
   full = null;
-  var newPlayer = new Player(0, 0, 0, 0, getRandomColor(), 'Player ' + (players.length+1));
+  var newPlayer = new Player(0, 0, 0, 0, getRandomColor(), '');//'Player ' + (players.length+1));
   for (let p of players) {
     p.damage.push({'amt':0, 'color':newPlayer.color});
     newPlayer.damage.push({'amt':0, 'color':p.color});

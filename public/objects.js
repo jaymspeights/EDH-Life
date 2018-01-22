@@ -87,6 +87,7 @@ class Player {
   render() {
     this.font_size = this.height/16;
     this.top_line = this.top_margin + this.font_size*3;
+    if (players.length==1) this.font_size *=1.75;
     this.center = this.width/2;
     fill(this.color);
     rect(this.x + this.margin, this.y + this.margin,
@@ -100,7 +101,7 @@ class Player {
     if (this.full) {
       textAlign(CENTER, CENTER)
       text(this.life, this.x + this.center/2, this.y + this.height/2);
-      line(this.center + this.x, this.y + this.top_line, this.center+this.x, this.y+this.height);
+      line(this.center + this.x, this.y + this.top_line, this.center+this.x, this.y+this.height-this.top_line);
       textSize(this.font_size*2);
       this.scale = (this.height-this.top_line)/(this.damage.length+1);
       push();
