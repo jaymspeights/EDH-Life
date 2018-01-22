@@ -32,18 +32,19 @@ class Player {
   }
 
   fullscreen(width, height) {
-    if (this.full == false) {
-      this.width = width;
-      this.height = height;
-      this.full = true;
-      this.x = 0;
-      this.y = 0;
-      return this;
-    }
-    else {
-      this.full = false;
-      return null;
-    }
+    if (players.length > 2)
+      if (this.full == false) {
+        this.width = width;
+        this.height = height;
+        this.full = true;
+        this.x = 0;
+        this.y = 0;
+        return this;
+      }
+      else {
+        this.full = false;
+        return null;
+      }
   }
 
   click(x, y) {
@@ -69,10 +70,17 @@ class Player {
           this.damage[i].amt--;
       }
     } else {
-      if (x > this.center)
-      this.life++;
-      else
-      this.life--;
+      if (players.length==2 && y>this.bottom_line*1.75+this.y) {
+        if (x > this.center)
+          this.damage[0].amt++;
+        else
+          this.damage[0].amt--;
+      } else {
+        if (x > this.center)
+          this.life++;
+        else
+          this.life--;
+      }
     }
   }
 
