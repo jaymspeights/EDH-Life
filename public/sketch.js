@@ -100,6 +100,7 @@ function mouseClicked() {
   }
   if (full != null) {
     full.click(mx, my)
+    redraw();
     return;
   }
   for (var i = 0; i < players.length; i++) {
