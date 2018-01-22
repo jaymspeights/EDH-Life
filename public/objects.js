@@ -10,7 +10,6 @@ class Player {
     this.name = name;
     this.life = 40;
     this.damage = [];
-    this.setFontSize(5);
     this.top_margin = 5;
     this.margin = 2;
     this.radius = 25;
@@ -47,42 +46,74 @@ class Player {
     }
   }
 
-  setFontSize(size) {
-    this.font_size = size;
-    this.top_line = this.top_margin + this.font_size*3;
-    this.bottom_line = this.top_margin + this.font_size*6;
-  }
-
   click(x, y) {
-    if (x > this.center)
+    if (this.full) {
+      //name clicked
+      if (y < this.top_line) {
+        console.log(this.name);
+      } // life clicked
+      else if (x < this.center) {
+        if (x < this.center/2)
+          this.life--;
+        else
+          this.life++;
+      } // c-damage clicked
+      else {
+        if (this.damage.length == 0) return;
+        let i = Math.floor((y-this.top_line)/this.scale - .5);
+        if (i < 0) i = 0;
+        if (i >= this.damage.length) i = this.damage.length;
+        if (x > this.center*1.5)
+          this.damage[i].amt++;
+        else
+          this.damage[i].amt--;
+      }
+    } else {
+      if (x > this.center)
       this.life++;
-    else
+      else
       this.life--;
+    }
   }
 
   render() {
-    this.setFontSize(this.height/16);
-    fill(this.color);
+    this.font_size = this.height/16;
+    this.top_line = this.top_margin + this.font_size*3;
     this.center = this.width/2;
+    fill(this.color);
     rect(this.x + this.margin, this.y + this.margin,
        this.width - 2*this.margin, this.height - 2*this.margin, this.radius);
     textSize(this.font_size*2)
     fill(0)
-    textAlign(CENTER, TOP)
+    textAlign(CENTER, TOP);
     text(this.name, this.x + this.center, this.y + this.top_margin);
     textSize(this.font_size*5)
-    text(this.life, this.x + this.center, this.y + this.top_line);
-    var grid = getLayout(this.damage.length);
-    var scale_x = this.width/(grid.x+1);
-    var scale_y = (this.height - this.bottom_line)/(grid.y+1);
-    var index = 0;
-    textSize(this.font_size*2)
-    for (var i = 0; i < grid.x; i++) {
-      for (var j = 0; j < grid.y; j++) {
-        if (index >= this.damage.length) continue;
-        fill(this.damage[index].color)
-        text(this.damage[index].amt, this.x + (i+1)*scale_x, this.y + (j+1)*scale_y + this.bottom_line);
-        index++;
+
+    if (this.full) {
+      textAlign(CENTER, CENTER)
+      text(this.life, this.x + this.center/2, this.y + this.height/2);
+      line(this.center + this.x, this.y + this.top_line, this.center+this.x, this.y+this.height);
+      textSize(this.font_size*2);
+      this.scale = (this.height-this.top_line)/(this.damage.length+1);
+      for (let i = 0; i < this.damage.length; i++) {
+        fill(this.damage[i].color);
+        text(this.damage[i].amt, this.x+this.center*1.5, this.y+this.top_line+(i+1)*this.scale);
+      }
+    } else {
+      this.bottom_line = this.top_margin + this.font_size*6;
+      text(this.life, this.x + this.center, this.y + this.top_line);
+      var grid = getLayout(this.damage.length);
+      var scale_x = this.width/(grid.x+1);
+      var scale_y = (this.height - this.bottom_line)/(grid.y+1);
+      var index = 0;
+      textSize(this.font_size*2)
+      for (var i = 0; i < grid.x; i++) {
+        for (var j = 0; j < grid.y; j++) {
+          if (index >= this.damage.length) continue;
+          fill(this.damage[index].color)
+          text(this.damage[index].amt, this.x + (i+1)*scale_x, this.y + (j+1)*scale_y + this.bottom_line);
+          index++;
+        }
       }
     }
   }

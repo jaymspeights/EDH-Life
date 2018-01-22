@@ -112,6 +112,8 @@ function mouseClicked() {
 }
 
 function mouseDragged() {
+  if (menu.expanded)
+    menu.collapse();
   if (rot) {
     mx = mouseY;
     my = height - mouseX;
