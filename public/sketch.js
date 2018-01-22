@@ -76,6 +76,8 @@ function rotateCanvas() {
     height = window.innerHeight;
   }
   orientPlayers();
+  if (full != null)
+    full.fullscreen(width, height);
   redraw();
 }
 
@@ -190,6 +192,7 @@ function orientPlayers() {
         players[index-1].width += scale_x;
       }
       else {
+        players[index].full = false;
         players[index].x = x*scale_x;
         players[index].y = y*scale_y;
         players[index].width = scale_x;
