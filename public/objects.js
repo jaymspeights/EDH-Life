@@ -1,37 +1,35 @@
 
-class Player {
+function Player (x, y, h, w, color, name){
 
-  constructor(x, y, height, width, color, name) {
-    this.x = x;
-    this.y = y;
-    this.height = height;
-    this.width = width;
-    this.color = color;
-    this.name = name;
-    this.life = 40;
-    this.damage = [];
-    this.top_margin = 5;
-    this.margin = 2;
-    this.radius = 25;
-    this.full = false;
-  }
+  this.x = x;
+  this.y = y;
+  this.height = h;
+  this.width = w;
+  this.color = color;
+  this.name = name;
+  this.life = 40;
+  this.damage = [];
+  this.top_margin = 5;
+  this.margin = 2;
+  this.radius = 25;
+  this.full = false;
 
-  inBounds(xp, yp) {
+  this.inBounds = function(xp, yp) {
     return xp >= this.x && xp <= this.x+this.width &&
             yp >= this.y && yp <= this.y+this.height;
   }
 
-  move(dx, dy) {
+  this.move = function(dx, dy) {
     this.x += dx;
     this.y += dy;
   }
 
-  moveTo(x, y) {
+  this.moveTo = function(x, y) {
     this.x = x;
     this.y = y;
   }
 
-  fullscreen(width, height) {
+  this.fullscreen = function(width, height) {
     if (players.length > 2)
       if (this.full == false) {
         this.width = width;
@@ -47,7 +45,7 @@ class Player {
       }
   }
 
-  click(x, y) {
+  this.click = function(x, y) {
     if (this.full) {
       //name clicked
       if (y < this.top_line) {
@@ -84,7 +82,7 @@ class Player {
     }
   }
 
-  render() {
+  this.render = function() {
     this.font_size = this.height/16;
     this.top_line = this.top_margin + this.font_size*3;
     if (players.length==1) this.font_size *=1.75;
@@ -146,26 +144,25 @@ function getLayout(num) {
   if (num == 9) return {x:3, y:3};
 }
 
-class Menu {
+function Menu (x, y, w, h, img) {
   //(x,y) == top right corner
-  constructor(x, y, width, height, img) {
-    this.img = img;
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.expanded = false;
-    this.menu_items = [];
-    var addPlayerItem = {'name':'Add Player','action': () => {addPlayer()}};
-    this.menu_items.push(addPlayerItem);
-  }
+  this.img = img;
+  this.x = x;
+  this.y = y;
+  this.width = w;
+  this.height = h;
+  this.expanded = false;
+  this.menu_items = [];
+  var addPlayerItem = {'name':'Add Player','action': addPlayer};
+  this.menu_items.push(addPlayerItem);
 
-  inBounds(xp, yp) {
+  this.inBounds = function(xp, yp) {
+    console.log(xp, yp, width+this.x-this.width, this.y)
     return xp <= width+this.x && xp >= width+this.x-this.width &&
             yp >= this.y && yp <= this.y+this.height;
   }
 
-  click(x, y) {
+  this.click = function(x, y) {
     if (this.expanded) {
       var index = Math.floor(y/this.height);
       this.menu_items[index].action();
@@ -173,19 +170,19 @@ class Menu {
       this.expand();
     }
   }
-  expand() {
+  this.expand = function() {
     if (this.expanded == false) {
       this.width = this.width*5;
       this.expanded = true;
     }
   }
-  collapse() {
+  this.collapse = function() {
     if (this.expanded) {
       this.width = this.width/5;
       this.expanded = false;
     }
   }
-  render() {
+  this.render = function() {
     if (this.expanded) {
       fill(0, 0, 50);
       rect(width + this.x - this.width, this.y,

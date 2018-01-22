@@ -17,6 +17,7 @@ var mx = 0;
 var my = 0;
 
 var settings_img;
+var moving = false;
 
 function preload() {
   settings_img = loadImage('images/settings.png');
@@ -82,37 +83,11 @@ function rotateCanvas() {
   redraw();
 }
 
-function mouseClicked() {
-  if (rot) {
-    mx = mouseY;
-    my = height - mouseX;
-  } else {
-    mx = mouseX;
-    my = mouseY;
-  }
-  if (menu.inBounds(mx, my)) {
-    menu.click(mx+menu.x-menu.width, my - menu.y);
-    redraw();
-    return;
-  } else if (menu.expanded){
-    menu.collapse();
-    redraw();
+function touchMoved() {
+  if (moving == false) {
+    moving = true;
     return;
   }
-  if (full != null) {
-    full.click(mx, my)
-    redraw();
-    return;
-  }
-  for (var i = 0; i < players.length; i++) {
-    if (players[i].inBounds(mx, my)) {
-      players[i].click(mx-players[i].x, my-players[i].y);
-      redraw();
-    }
-  }
-}
-
-function mouseDragged() {
   if (menu.expanded)
     menu.collapse();
   if (rot) {
@@ -132,7 +107,7 @@ function mouseDragged() {
       drag.player.x = mx - drag.x_offset;
       drag.player.y = my - drag.y_offset;
       redraw();
-      return;
+      return false;
     }
     for(var i = 0; i < players.length; i++) {
       if (players[i].inBounds(mx, my)) {
@@ -148,9 +123,11 @@ function mouseDragged() {
   drag.player.x = mx - drag.x_offset;
   drag.player.y = my - drag.y_offset;
   redraw();
+  return;
 }
 
-function mouseReleased() {
+function touchEnded() {
+  moving = false;
   if (drag.player != null) {
     var dx = Math.abs(drag.player.x - drag.x);
     var dy = Math.abs(drag.player.y - drag.y);
@@ -163,8 +140,37 @@ function mouseReleased() {
       drag.player.x = drag.x;
       drag.player.y = drag.y;
     }
-    drag.player = null;
+    drag.player = null
     redraw();
+  } else {
+    if (drag.player != null) return false;
+    if (rot) {
+      mx = mouseY;
+      my = height - mouseX;
+    } else {
+      mx = mouseX;
+      my = mouseY;
+    }
+    if (menu.inBounds(mx, my)) {
+      menu.click(mx+menu.x-menu.width, my - menu.y);
+      redraw();
+      return;
+    } else if (menu.expanded){
+      menu.collapse();
+      redraw();
+      return
+    }
+    if (full != null) {
+      full.click(mx, my)
+      redraw();
+      return;
+    }
+    for (var i = 0; i < players.length; i++) {
+      if (players[i].inBounds(mx, my)) {
+        players[i].click(mx-players[i].x, my-players[i].y);
+        redraw();
+      }
+    }
   }
 }
 
@@ -175,9 +181,9 @@ function addPlayer() {
   }
   full = null;
   var newPlayer = new Player(0, 0, 0, 0, getRandomColor(), '');//'Player ' + (players.length+1));
-  for (let p of players) {
-    p.damage.push({'amt':0, 'color':newPlayer.color});
-    newPlayer.damage.push({'amt':0, 'color':p.color});
+  for (var i = 0; i < players.length; i++) {
+    players[i].damage.push({'amt':0, 'color':newPlayer.color});
+    newPlayer.damage.push({'amt':0, 'color':players[i].color});
   }
   players.push(newPlayer);
   orientPlayers();
@@ -220,7 +226,7 @@ var offset = Math.floor(Math.random()*180)-90;
 var color_index = 0;
 function getRandomColor() {
   let b = color_index < 5? '95%':'55%';
-  let c = `hsb(${Math.floor(offset+color_index*360*0.618033988749895+360)%360},100%,${b})`
+  let c = 'hsb('+(Math.floor(offset+color_index*360*0.618033988749895+360)%360)+',100%,'+b+')';
   color_index++;
   return c;
 }
