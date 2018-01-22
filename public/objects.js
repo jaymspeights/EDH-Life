@@ -170,11 +170,11 @@ class Menu {
   }
   render() {
     if (this.expanded) {
-      fill(100);
+      fill(0, 0, 50);
       rect(width + this.x - this.width, this.y,
             this.width, this.height*this.menu_items.length);
       for (var i = 0; i < this.menu_items.length; i++) {
-        fill(150)
+        fill(0, 0, 70)
         rect(width + this.x - this.width+5, this.y + i*this.height+5,
             this.width-10, this.height-10, 25);
         fill(0)
