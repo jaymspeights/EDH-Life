@@ -127,6 +127,7 @@ function touchMoved() {
 }
 
 function touchEnded() {
+  console.log('touching')
   moving = false;
   if (drag.player != null) {
     var dx = Math.abs(drag.player.x - drag.x);
@@ -154,16 +155,16 @@ function touchEnded() {
     if (menu.inBounds(mx, my)) {
       menu.click(mx+menu.x-menu.width, my - menu.y);
       redraw();
-      return;
+      return false;
     } else if (menu.expanded){
       menu.collapse();
       redraw();
-      return
+      return false;
     }
     if (full != null) {
       full.click(mx, my)
       redraw();
-      return;
+      return false;
     }
     for (var i = 0; i < players.length; i++) {
       if (players[i].inBounds(mx, my)) {
@@ -172,6 +173,7 @@ function touchEnded() {
       }
     }
   }
+  return false;
 }
 
 function addPlayer() {
