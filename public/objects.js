@@ -154,17 +154,25 @@ function Menu (x, y, w, h, img) {
   this.expanded = false;
   this.menu_items = [];
   var addPlayerItem = {'name':'Add Player','action': addPlayer};
+  var removePlayerItem = {'name':'Remove Player','action': removePlayer}
   this.menu_items.push(addPlayerItem);
+  this.menu_items.push(removePlayerItem);
 
   this.inBounds = function(xp, yp) {
     console.log(xp, yp, width+this.x-this.width, this.y)
-    return xp <= width+this.x && xp >= width+this.x-this.width &&
-            yp >= this.y && yp <= this.y+this.height;
+    if (this.expanded) {
+      return xp <= width+this.x && xp >= width+this.x-this.width &&
+              yp >= this.y && yp <= this.y+this.height*this.menu_items.length;
+    } else {
+      return xp <= width+this.x && xp >= width+this.x-this.width &&
+              yp >= this.y && yp <= this.y+this.height;
+    }
   }
 
   this.click = function(x, y) {
     if (this.expanded) {
       var index = Math.floor(y/this.height);
+      console.log(y/this.height, index)
       this.menu_items[index].action();
     } else {
       this.expand();

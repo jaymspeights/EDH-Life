@@ -127,7 +127,6 @@ function touchMoved() {
 }
 
 function touchEnded() {
-  console.log('touching')
   moving = false;
   if (drag.player != null) {
     var dx = Math.abs(drag.player.x - drag.x);
@@ -192,7 +191,24 @@ function addPlayer() {
   redraw();
 }
 
+function removePlayer() {
+  if (players.length == 0) return;
+  let removed_player = players.pop();
+  pallete.push(removed_player.color);
+  for (let i = 0; i < players.length; i++) {
+    for (let j = 0; j < players[i].damage.length; j++) {
+      if (players[i].damage[j].color == removed_player.color) {
+        players[i].damage.splice(j, 1);
+        break;
+      }
+    }
+  }
+  orientPlayers();
+  redraw();
+}
+
 function orientPlayers() {
+  if (players.length == 0) return;
   var divisor = getDivisors(players.length);
   var scale_x = width / divisor.x;
   var scale_y = height / divisor.y;
@@ -225,10 +241,17 @@ function getDivisors(num) {
 }
 
 var offset = Math.floor(Math.random()*180)-90;
-var color_index = 0;
+var pallete = [];
+for (var i = 0; i < 9; i++) {
+  let b = i < 5? '95%':'55%';
+  pallete.push('hsb('+(Math.floor(offset + i*360*0.618033988749895+360)%360)+',100%,'+b+')')
+}
+
+
 function getRandomColor() {
-  let b = color_index < 5? '95%':'55%';
-  let c = 'hsb('+(Math.floor(offset+color_index*360*0.618033988749895+360)%360)+',100%,'+b+')';
-  color_index++;
-  return c;
+  var r = Math.floor(Math.random()*pallete.length);
+  var color = pallete[r];
+  console.log(color)
+  pallete.splice(r, 1);
+  return color;
 }
