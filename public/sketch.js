@@ -120,8 +120,7 @@ function touchMoved() {
       }
     }
   }
-  drag.player.x = mx - drag.x_offset;
-  drag.player.y = my - drag.y_offset;
+  drag.player.moveTo(mx - drag.x_offset, my - drag.y_offset);
   redraw();
   return;
 }
@@ -204,6 +203,16 @@ function removePlayer() {
     }
   }
   orientPlayers();
+  redraw();
+}
+
+function resetLife() {
+  for (let i = 0; i < players.length; i++) {
+    players[i].life = 40;
+    for (let j = 0; j < players[i].damage.length; j++) {
+      players[i].damage[j].amt = 0;
+    }
+  }
   redraw();
 }
 

@@ -154,12 +154,13 @@ function Menu (x, y, w, h, img) {
   this.expanded = false;
   this.menu_items = [];
   var addPlayerItem = {'name':'Add Player','action': addPlayer};
-  var removePlayerItem = {'name':'Remove Player','action': removePlayer}
+  var removePlayerItem = {'name':'Remove Player','action': removePlayer};
+  var resetLifeItem = {'name':'Reset Life','action': resetLife};
   this.menu_items.push(addPlayerItem);
   this.menu_items.push(removePlayerItem);
+  this.menu_items.push(resetLifeItem);
 
   this.inBounds = function(xp, yp) {
-    console.log(xp, yp, width+this.x-this.width, this.y)
     if (this.expanded) {
       return xp <= width+this.x && xp >= width+this.x-this.width &&
               yp >= this.y && yp <= this.y+this.height*this.menu_items.length;
@@ -172,7 +173,6 @@ function Menu (x, y, w, h, img) {
   this.click = function(x, y) {
     if (this.expanded) {
       var index = Math.floor(y/this.height);
-      console.log(y/this.height, index)
       this.menu_items[index].action();
     } else {
       this.expand();
@@ -194,11 +194,11 @@ function Menu (x, y, w, h, img) {
     if (this.expanded) {
       fill(0, 0, 50);
       rect(width + this.x - this.width, this.y,
-            this.width, this.height*this.menu_items.length);
+            this.width, this.height*this.menu_items.length, 10);
       for (var i = 0; i < this.menu_items.length; i++) {
         fill(0, 0, 70)
-        rect(width + this.x - this.width+5, this.y + i*this.height+5,
-            this.width-10, this.height-10, 25);
+        rect(width + this.x - this.width+3, this.y + i*this.height+3,
+            this.width-6, this.height-6, 10);
         fill(0)
         textAlign(CENTER, CENTER);
         textSize(this.height/2)
