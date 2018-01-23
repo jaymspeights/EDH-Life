@@ -29,18 +29,28 @@ function Player (x, y, h, w, color, name){
     this.y = y;
   }
 
-  this.fullscreen = function(width, height) {
+  this.fullscreen = function(width, height, oldx, oldy) {
     if (players.length > 2)
       if (this.full == false) {
+        this.storew = this.width;
+        this.storeh = this.height;
+        this.storex = oldx;
+        this.storey = oldy;
         this.width = width;
         this.height = height;
-        this.full = true;
         this.x = 0;
         this.y = 0;
+        this.full = true;
+        this.render();
         return this;
       }
       else {
+        this.width = this.storew;
+        this.height = this.storeh;
+        this.x = this.storex;
+        this.y = this.storey;
         this.full = false;
+        this.render();
         return null;
       }
   }
@@ -49,13 +59,14 @@ function Player (x, y, h, w, color, name){
     if (this.full) {
       //name clicked
       if (y < this.top_line) {
-        console.log(this.name);
+        //name clicked
       } // life clicked
       else if (x < this.center) {
         if (x < this.center/2)
           this.life--;
         else
           this.life++;
+        this.render();
       } // c-damage clicked
       else {
         if (this.damage.length == 0) return;
@@ -66,6 +77,7 @@ function Player (x, y, h, w, color, name){
           this.damage[i].amt++;
         else
           this.damage[i].amt--;
+        this.render();
       }
     } else {
       if (players.length==2 && y>this.bottom_line*1.75+this.y) {
@@ -79,60 +91,67 @@ function Player (x, y, h, w, color, name){
         else
           this.life--;
       }
+      this.render();
     }
   }
 
   this.render = function() {
+    this.buffer = createGraphics(this.width, this.height);
+    this.buffer.pixelDensity(1)
     this.font_size = this.height/16;
     this.top_line = this.top_margin + this.font_size*3;
     if (players.length==1) this.font_size *=1.75;
     this.center = this.width/2;
-    fill(this.color);
-    rect(this.x + this.margin, this.y + this.margin,
-       this.width - 2*this.margin, this.height - 2*this.margin, this.radius);
-    textSize(this.font_size*2)
-    fill(0)
-    textAlign(CENTER, TOP);
-    text(this.name, this.x + this.center, this.y + this.top_margin);
-    textSize(this.font_size*5)
-
+    this.buffer.fill(this.color);
+    this.buffer.rect(this.margin, this.margin, this.width - 2*this.margin,
+        this.height - 2*this.margin, this.radius);
+    this.buffer.textSize(this.font_size*2)
+    this.buffer.fill(0)
+    this.buffer.textAlign(CENTER, TOP);
+    this.buffer.text(this.name, this.center, this.top_margin);
+    this.buffer.textSize(this.font_size*5)
     if (this.full) {
-      textAlign(CENTER, CENTER)
-      text(this.life, this.x + this.center/2, this.y + this.height/2);
-      line(this.center + this.x, this.y + this.top_line, this.center+this.x, this.y+this.height-this.top_line);
-      textSize(this.font_size*2);
+      this.buffer.textAlign(CENTER, CENTER)
+      this.buffer.text(this.life, this.center/2, this.height/2);
+      this.buffer.line(this.center, this.top_line, this.center, this.height-this.top_line);
+      this.buffer.textSize(this.font_size*2);
       this.scale = (this.height-this.top_line)/(this.damage.length+1);
-      push();
-      strokeWeight(3);
-      stroke(0)
+      this.buffer.push();
+      this.buffer.strokeWeight(3);
+      this.buffer.stroke(0)
       for (let i = 0; i < this.damage.length; i++) {
-        fill(this.damage[i].color);
-        text(this.damage[i].amt, this.x+this.center*1.5, this.y+this.top_line+(i+1)*this.scale);
+        this.buffer.fill(this.damage[i].color);
+        this.buffer.text(this.damage[i].amt, this.center*1.5, this.top_line+(i+1)*this.scale);
       }
-      pop();
+      this.buffer.pop();
     } else {
       this.bottom_line = this.top_margin + this.font_size*6;
-      text(this.life, this.x + this.center, this.y + this.top_line);
+      this.buffer.text(this.life, this.center, this.top_line);
       var grid = getLayout(this.damage.length);
       var scale_x = this.width/(grid.x+1);
       var scale_y = (this.height - this.bottom_line)/(grid.y+1);
       var index = 0;
-      textSize(this.font_size*2)
-      push();
-      strokeWeight(1);
-      stroke(0)
+      this.buffer.textSize(this.font_size*2)
+      this.buffer.push();
+      this.buffer.strokeWeight(1);
+      this.buffer.stroke(0)
       for (var i = 0; i < grid.x; i++) {
         for (var j = 0; j < grid.y; j++) {
           if (index >= this.damage.length) continue;
-          fill(this.damage[index].color)
-          text(this.damage[index].amt, this.x + (i+1)*scale_x, this.y + (j+1)*scale_y + this.bottom_line);
+          this.buffer.fill(this.damage[index].color)
+          this.buffer.text(this.damage[index].amt, (i+1)*scale_x, (j+1)*scale_y + this.bottom_line);
           index++;
         }
       }
-      pop();
+      this.buffer.pop();
     }
   }
+
+  this.draw = function () {
+    image(this.buffer, this.x, this.y);
+  }
 }
+
 
 function getLayout(num) {
   if (num == 0) return {x:0, y:0};
@@ -190,7 +209,7 @@ function Menu (x, y, w, h, img) {
       this.expanded = false;
     }
   }
-  this.render = function() {
+  this.draw = function() {
     if (this.expanded) {
       fill(0, 0, 50);
       rect(width + this.x - this.width, this.y,

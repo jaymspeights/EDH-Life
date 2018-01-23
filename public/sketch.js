@@ -7,7 +7,7 @@ var menu;
 var drag = {'player':null, 'x_offset':null, 'y_offset':null, 'x':null, 'y':null}
 
 //contains current fullscreen player
-var full = null;
+var full;
 
 //is screen rotated?
 var rot = false;
@@ -48,15 +48,15 @@ function draw() {
     translate(-width/2, -height/2);
   }
   for (var i = 0; i < players.length; i++) {
-    players[i].render()
+    players[i].draw();
   }
   if (drag.player != null) {
-    drag.player.render();
+    drag.player.draw();
   }
   if (full != null) {
-    full.render();
+    full.draw();
   }
-  menu.render();
+  menu.draw();
   if (rot) {
     pop();
   }
@@ -90,6 +90,7 @@ function touchMoved() {
   }
   if (menu.expanded)
     menu.collapse();
+  //if rotated, invert x/y
   if (rot) {
     mx = mouseY;
     my = height - mouseX;
@@ -98,27 +99,22 @@ function touchMoved() {
     my = mouseY;
   }
   if (drag.player == null) {
+    let p;
     if (full != null) {
-      drag.player = full;
-      drag.x_offset = mx - full.x;
-      drag.y_offset = my - full.y;
-      drag.x = full.x;
-      drag.y = full.y;
-      drag.player.x = mx - drag.x_offset;
-      drag.player.y = my - drag.y_offset;
-      redraw();
-      return false;
-    }
-    for(var i = 0; i < players.length; i++) {
-      if (players[i].inBounds(mx, my)) {
-        drag.player = players[i];
-        drag.x_offset = mx - players[i].x;
-        drag.y_offset = my - players[i].y;
-        drag.x = players[i].x;
-        drag.y = players[i].y;
-        break;
+      p = full;
+    } else {
+      for(var i = 0; i < players.length; i++) {
+        if (players[i].inBounds(mx, my)) {
+          p = players[i]
+          break
+        }
       }
     }
+    drag.player = p;
+    drag.x_offset = mx - p.x;
+    drag.y_offset = my - p.y;
+    drag.x = p.x;
+    drag.y = p.y;
   }
   drag.player.moveTo(mx - drag.x_offset, my - drag.y_offset);
   redraw();
@@ -127,21 +123,19 @@ function touchMoved() {
 
 function touchEnded() {
   moving = false;
+  //drag released
   if (drag.player != null) {
     var dx = Math.abs(drag.player.x - drag.x);
     var dy = Math.abs(drag.player.y - drag.y);
     if (dx > width/4 || dy > width/4 || dx+dy > width/4) {
-      full = drag.player.fullscreen(width, height);
-      if (full == null) {
-        orientPlayers();
-      }
+      full = drag.player.fullscreen(width, height, drag.x, drag.y);
     } else {
-      drag.player.x = drag.x;
-      drag.player.y = drag.y;
+      drag.player.moveTo(drag.x, drag.y);
     }
     drag.player = null
     redraw();
-  } else {
+  } //single touch
+  else {
     if (drag.player != null) return false;
     if (rot) {
       mx = mouseY;
@@ -213,6 +207,7 @@ function resetLife() {
       players[i].damage[j].amt = 0;
     }
   }
+  renderPlayers();
   redraw();
 }
 
@@ -238,6 +233,13 @@ function orientPlayers() {
       index += 1;
     }
   }
+  renderPlayers();
+}
+
+function renderPlayers() {
+  for (let i = 0; i < players.length; i++) {
+    players[i].render();
+  }
 }
 
 function getDivisors(num) {
@@ -260,7 +262,6 @@ for (var i = 0; i < 9; i++) {
 function getRandomColor() {
   var r = Math.floor(Math.random()*pallete.length);
   var color = pallete[r];
-  console.log(color)
   pallete.splice(r, 1);
   return color;
 }
