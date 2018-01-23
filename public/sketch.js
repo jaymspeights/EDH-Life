@@ -127,7 +127,7 @@ function touchEnded() {
   if (drag.player != null) {
     var dx = Math.abs(drag.player.x - drag.x);
     var dy = Math.abs(drag.player.y - drag.y);
-    if (dx > width/4 || dy > width/4 || dx+dy > width/4) {
+    if ((dx > width/4 || dy > width/4 || dx+dy > width/4) && players.length>2) {
       full = drag.player.fullscreen(width, height, drag.x, drag.y);
     } else {
       drag.player.moveTo(drag.x, drag.y);

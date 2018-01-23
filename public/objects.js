@@ -30,29 +30,28 @@ function Player (x, y, h, w, color, name){
   }
 
   this.fullscreen = function(width, height, oldx, oldy) {
-    if (players.length > 2)
-      if (this.full == false) {
-        this.storew = this.width;
-        this.storeh = this.height;
-        this.storex = oldx;
-        this.storey = oldy;
-        this.width = width;
-        this.height = height;
-        this.x = 0;
-        this.y = 0;
-        this.full = true;
-        this.render();
-        return this;
-      }
-      else {
-        this.width = this.storew;
-        this.height = this.storeh;
-        this.x = this.storex;
-        this.y = this.storey;
-        this.full = false;
-        this.render();
-        return null;
-      }
+    if (this.full == false) {
+      this.storew = this.width;
+      this.storeh = this.height;
+      this.storex = oldx;
+      this.storey = oldy;
+      this.width = width;
+      this.height = height;
+      this.x = 0;
+      this.y = 0;
+      this.full = true;
+      this.render();
+      return this;
+    }
+    else {
+      this.width = this.storew;
+      this.height = this.storeh;
+      this.x = this.storex;
+      this.y = this.storey;
+      this.full = false;
+      this.render();
+      return null;
+    }
   }
 
   this.click = function(x, y) {
