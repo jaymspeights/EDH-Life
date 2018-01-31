@@ -186,7 +186,17 @@ function addPlayer() {
 
 function removePlayer() {
   if (players.length == 0) return;
-  let removed_player = players.pop();
+  var removed_player;
+  if (full != null) {
+    removed_player = full;
+    for (let i = 0; i < players.length; i++) {
+      if (full == players[i])
+        players.splice(i, 1);
+    }
+    full = null;
+  } else {
+    removed_player = players.pop();
+  }
   pallete.push(removed_player.color);
   for (let i = 0; i < players.length; i++) {
     for (let j = 0; j < players[i].damage.length; j++) {
@@ -200,9 +210,9 @@ function removePlayer() {
   redraw();
 }
 
-function resetLife() {
+function resetLife(life) {
   for (let i = 0; i < players.length; i++) {
-    players[i].life = 40;
+    players[i].life = life;
     for (let j = 0; j < players[i].damage.length; j++) {
       players[i].damage[j].amt = 0;
     }

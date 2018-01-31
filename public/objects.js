@@ -62,9 +62,15 @@ function Player (x, y, h, w, color, name){
       } // life clicked
       else if (x < this.center) {
         if (x < this.center/2)
-          this.life--;
+          if (y < this.height/2)
+            this.life-=5;
+          else
+            this.life--;
         else
-          this.life++;
+          if (y < this.height/2)
+            this.life+=5;
+          else
+            this.life++;
         this.render();
       } // c-damage clicked
       else {
@@ -112,6 +118,9 @@ function Player (x, y, h, w, color, name){
     if (this.full) {
       this.buffer.textAlign(CENTER, CENTER)
       this.buffer.text(this.life, this.center/2, this.height/2);
+      var l_w = this.buffer.textWidth(this.life);
+      this.buffer.line(this.top_line/2, this.height/2, this.center/2-l_w/2, this.height/2);
+      this.buffer.line(this.center/2+l_w/2, this.height/2, this.center-this.top_line/2, this.height/2);
       this.buffer.line(this.center, this.top_line, this.center, this.height-this.top_line);
       this.buffer.textSize(this.font_size*2);
       this.scale = (this.height-this.top_line)/(this.damage.length+1);
@@ -170,13 +179,28 @@ function Menu (x, y, w, h, img) {
   this.width = w;
   this.height = h;
   this.expanded = false;
-  this.menu_items = [];
-  var addPlayerItem = {'name':'Add Player','action': addPlayer};
-  var removePlayerItem = {'name':'Remove Player','action': removePlayer};
-  var resetLifeItem = {'name':'Reset Life','action': resetLife};
-  this.menu_items.push(addPlayerItem);
-  this.menu_items.push(removePlayerItem);
-  this.menu_items.push(resetLifeItem);
+
+  this.resetMenu = function () {
+    this.menu_items = [];
+    var addPlayerItem = {'name':'Add Player','action': addPlayer};
+    var removePlayerItem = {'name':'Remove Player','action': removePlayer};
+    var resetLifeItem = {'name':'Reset Life','action': () => this.chooseLife()};
+    this.menu_items.push(addPlayerItem);
+    this.menu_items.push(removePlayerItem);
+    this.menu_items.push(resetLifeItem);
+  }
+
+  this.resetMenu();
+
+  this.chooseLife = function () {
+    this.menu_items = [];
+    var item20 = {'name':'20 Life','action': () => { this.resetMenu(); resetLife(20) }};
+    var item30 = {'name':'30 Life','action': () => { this.resetMenu(); resetLife(30) }};
+    var item40 = {'name':'40 Life','action': () => { this.resetMenu(); resetLife(40) }};
+    this.menu_items.push(item20);
+    this.menu_items.push(item30);
+    this.menu_items.push(item40);
+  }
 
   this.inBounds = function(xp, yp) {
     if (this.expanded) {
@@ -206,6 +230,7 @@ function Menu (x, y, w, h, img) {
     if (this.expanded) {
       this.width = this.width/5;
       this.expanded = false;
+      this.resetMenu();
     }
   }
   this.draw = function() {
